@@ -1,0 +1,73 @@
+#%RAML 0.8
+title: American Flights API
+version: 1.0
+baseUri: http://apdev-customer1-ws-koyalkar.cloudhub.io/api
+schemas:
+  - flight: |
+      {
+        "properties": {
+          "ID": {
+            "description": "The customer ID",
+            "type": "string",
+            "required": true
+          },
+          "firstName": {
+            "description": "The Customer First Name",
+            "type": "string",
+            "required": true
+          },
+          "lastName": {
+            "description": "The Customer Last Name",
+            "type": "string",
+            "required": false
+          },
+          "address": {
+            "description": "The Customer address",
+            "type": "string",
+            "required": false
+          },
+          
+          "modified": {
+            "description": "The Customer details Modified or created Time stamp",
+            "type": "string",
+            "required": false
+          }
+        }
+      }
+     
+/Customer:
+  get:
+    queryParameters:
+      ID:
+        required: false
+      postCode:
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [{"ID":1, "firstName": "Rajkumar","lastname":"Koyalkar", "Address": "Unit5,166-170 Targo Rd,Girraween,NSW,2145", "modifiedDate": "2017-09-14 13:30:06"},{"ID":2, "firstName":"Mridhini","lastname":"Koyalkar", "Address": "Unit19,166 Targo Rd,Girraween,NSW,2145", "modifiedDate": "2017-09-15 13:30:06"}]
+               
+/{ID}:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {"ID":2, "firstName":"Mridhini","lastname":"Koyalkar", "Address": "Unit19,166 Targo Rd,Girraween,NSW,2145", "modifiedDate": "2017-09-15 13:30:06"}
+                
+/getAllCustomers:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [{"ID":1, "firstName": "Rajkumar","lastname":"Koyalkar", "Address": "Unit5,166-170 Targo Rd,Girraween,NSW,2145", "modifiedDate": "2017-09-14 13:30:06"},{"ID":2, "firstName":"Mridhini","lastname":"Koyalkar", "Address": "Unit19,166 Targo Rd,Girraween,NSW,2145", "modifiedDate": "2017-09-15 13:30:06"}]
+
+    
+   
+
+    

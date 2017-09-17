@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:context="http://www.springframework.org/schema/context" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd">
+
+    <apikit:config name="customer-config" raml="customer.raml" consoleEnabled="false" doc:name="Router"/>
+    <db:generic-config name="Generic_Database_Configuration" url="${db.URL}" driverClassName="org.h2.Driver" doc:name="Generic Database Configuration"/>
+    <ee:object-store-caching-strategy name="Caching_Strategy1" keyGenerationExpression="#[flowVars.QueryId]" doc:name="Caching Strategy"/>
+    <ee:object-store-caching-strategy name="Caching_Strategy2" keyGenerationExpression="#[flowVars.QueryPostCode]" doc:name="Caching Strategy"/>
+  
+
+
+    
+<sub-flow name="caching_SubFlow">
+     
+            <logger message="Query DataBase Intiated" level="INFO" doc:name="Logger"/>
+        <ee:cache cachingStrategy-ref="Caching_Strategy" doc:name="Cache">
+            <choice tracking:enable-default-events="true" doc:name="Choice">
+                <when expression="#[message.inboundProperties.'http.query.params'.ID != empty]">
+                    <logger message="SubFlowQueryid- variable  = #[flowVars.QueryID]" level="INFO" doc:name="subFlowQueryIDLogger"/>
+                    <db:select config-ref="Generic_Database_Configuration" streaming="true" doc:name="Database">
+                        <db:parameterized-query><![CDATA[select * from CUSTOMER where ID=#[flowVars.QueryID]]]></db:parameterized-query>
+                    </db:select>
+                </when>
+                <when expression="#[message.inboundProperties.'http.uri.params'.ID != empty]">
+                    <logger message="SubFlowURIID- variable  = #[flowVars.URIID]" level="INFO" doc:name="subFlowQueryURIbyID"/>
+                    <db:select config-ref="Generic_Database_Configuration" doc:name="Database">
+                        <db:parameterized-query><![CDATA[select * from CUSTOMER where ID=#[flowVars.URIID]]]></db:parameterized-query>
+                    </db:select>
+                </when>
+                <when expression="#[message.inboundProperties.'http.query.params'.postCode != empty]">
+                    <logger message="SubFlowPostcode- variable  = #[flowVars.URIID]" level="INFO" doc:name="subFlowQueryPostCodeLogger"/>
+                    <db:select config-ref="Generic_Database_Configuration" doc:name="Database">
+                        <db:parameterized-query><![CDATA[select * from CUSTOMER where POSTCODE = #[flowVars.QueryPostCode]]]></db:parameterized-query>
+                    </db:select>
+                </when>
+                <when expression="#[flowVars.QueryAll != empty]">
+                    <logger message="SubFlowPostcode- variable  = #[flowVars.QueryAll]" level="INFO" doc:name="subFlowQueryforAll"/>
+                    <db:select config-ref="Generic_Database_Configuration" doc:name="Database">
+                        <db:parameterized-query><![CDATA[select * from CUSTOMER]]></db:parameterized-query>
+                    </db:select>
+                </when>
+            </choice>
+        </ee:cache>
+        
+            <logger message="Query Results: #[payload]" level="INFO" doc:name="Logger"/>
+        
+
+
+</sub-flow>
+
+
+</mule>
