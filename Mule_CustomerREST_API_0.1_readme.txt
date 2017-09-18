@@ -1,0 +1,45 @@
+======================================================================
+Product Name	 : Customer REST API
+Release Version	 : 0.1
+Release Date	 : september 2017
+
+======================================================================
+Introduction 
+
+Customer REST API is used to fetch 
+a)Fetch all the customers details
+b) Query for a single customer by providing ID
+c) Query for selected customers that match selected query parameters (e.g. postcode)
+
+======================================================================
+Supported Platforms
+
+   Microsoft Windows
+      7 32-bit on x86
+      7 64-bit on x86-64
+   Red Hat Enterprise Linux Server
+      5.5, 6.x 32-bit on x86
+      5.5, 6.x 64-bit on x86-64
+
+
+======================================================================
+Supported Third-party Software
+
+   H2 database
+     	Version 1.4.196
+	Log in to H2 database and Execute CustomerDB.sql script to create H2 database for REST API.
+
+======================================================================
+Minimum Software Requirements
+
+   Mulesoft Software:
+     Anypoint Studio Version: 6.2.2
+		     Build Id: 201701271427 
+     RAML Version: 0.8
+
+======================================================================
+
+
+
+
+
